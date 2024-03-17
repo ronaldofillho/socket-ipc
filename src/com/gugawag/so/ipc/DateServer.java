@@ -13,34 +13,49 @@ import java.net.*;
 import java.io.*;
 import java.util.Date;
 
-public class DateServer{
-	public static void main(String[] args)  {
-		try {
-			ServerSocket sock = new ServerSocket(6013);
+public class DateServer {
+    public static void main(String[] args) {
+        ServerSocket sock = null;
+        try {
+            sock = new ServerSocket(6013);
 
-			System.out.println("=== Servidor iniciado ===\n");
-			// escutando por conexões
-			while (true) {
-				Socket client = sock.accept();
-				// Se chegou aqui, foi porque algum cliente se comunicou
-				System.out.println("Servidor recebeu comunicação do ip: " + client.getInetAddress() + "-" + client.getPort());
-				PrintWriter pout = new PrintWriter(client.getOutputStream(), true);
+            System.out.println("=== Servidor iniciado ===\n");
+            // escutando por conexões
+            while (true) {
+                Socket client = sock.accept();
 
-				// Escreve a data atual no socket
-				pout.println(new Date().toString() + "-Boa noite alunos!");
+                // Tornando um servidor Multicliente
+                new Thread(() -> {
+                    try {
+                        System.out.println("Servidor recebeu comunicação do ip: " + client.getInetAddress() + "-" + client.getPort());
+                        PrintWriter pout = new PrintWriter(client.getOutputStream(), true);
 
-				InputStream in = client.getInputStream();
-				BufferedReader bin = new BufferedReader(new InputStreamReader(in));
+                        // Escreve a data atual no socket
+                        pout.println(new Date().toString() + "-Boa noite alunos!");
 
-				String line = bin.readLine();
-				System.out.println("O cliente me disse:" + line);
+                        InputStream in = client.getInputStream();
+                        BufferedReader bin = new BufferedReader(new InputStreamReader(in));
 
-				// fechar o socket e volta no loop para escutar novas conexões
-				client.close();
-			}
-		}
-		catch (IOException ioe) {
-				System.err.println(ioe);
-		}
-	}
+                        String line = bin.readLine();
+                        System.out.println("O cliente me disse:" + line);
+
+                        // fechar o socket
+                        client.close();
+                    } catch (IOException ioe) {
+                        System.err.println(ioe);
+                    }
+                }).start();
+            }
+        } catch (IOException ioe) {
+            System.err.println(ioe);
+        } finally {
+            if (sock != null) {
+                try {
+                    sock.close();
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+            }
+        }
+    }
 }

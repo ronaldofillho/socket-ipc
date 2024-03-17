@@ -11,13 +11,12 @@ package com.gugawag.so.ipc;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Date;
 
 public class NomeClient {
-	public static void main(String[] args)  {
+	public static void main(String[] args) {
 		try {
 			// this could be changed to an IP name or address other than the localhost
-			Socket servidorSock = new Socket("127.0.0.1",6013);
+			Socket servidorSock = new Socket("192.168.0.109", 6013);
 			InputStream in = servidorSock.getInputStream();
 			BufferedReader bin = new BufferedReader(new InputStreamReader(in));
 
@@ -28,11 +27,10 @@ public class NomeClient {
 
 			PrintWriter pout = new PrintWriter(servidorSock.getOutputStream(), true);
 			// TODO Altere abaixo para enviar seu nome ao servidor
-			pout.println("SEU NOME AQUI");
+			pout.println("Ronaldo Paulo da Silva Filho - 20202370005");
 			servidorSock.close();
-		}
-		catch (IOException ioe) {
-				System.err.println(ioe);
+		} catch (IOException ioe) {
+			System.err.println(ioe);
 		}
 	}
 }
